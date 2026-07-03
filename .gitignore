@@ -1,0 +1,19 @@
+# Python virtual environment
+backend/venv/
+backend/.env
+backend/.pytest_cache/
+backend/test.db
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# IDEs and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Large files
+flutter.zip
+
