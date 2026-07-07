@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 dias
     DATABASE_URL: str = "postgresql+psycopg2://educador_user:educador_password@localhost:5433/educador_dev"
     GEMINI_API_KEY: str | None = None
+    GROQ_API_KEY: str | None = None
+    AI_PROVIDER: str = "groq"
+    GROQ_MODEL: str = "llama-3.1-8b-instant"
 
 
     model_config = SettingsConfigDict(env_file=".env", env_ignore_empty=True, extra="ignore")
