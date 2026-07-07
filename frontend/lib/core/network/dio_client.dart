@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 class DioClient {
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'http://127.0.0.1:8001/api/v1',
+      baseUrl: 'http://127.0.0.1:8005/api/v1',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {

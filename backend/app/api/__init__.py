@@ -7,5 +7,30 @@ from .progress import router as progress_router
 from .ai import router as ai_router
 from .flashcards import router as flashcards_router
 from .activity_logs import router as activity_logs_router
+from .classrooms import router as classrooms_router
+from .assignments import router as assignments_router
+from .essays import router as essays_router
+from .wiki import router as wiki_router
+from .audio import router as audio_router
+from .youtube import router as youtube_router
+from .library import router as library_router
 
-__all__ = ["courses_router", "modules_router", "units_router", "topics_router", "global_topics_router", "questions_router", "progress_router", "ai_router", "flashcards_router", "activity_logs_router"]
+__all__ = [
+    "courses_router",
+    "modules_router",
+    "units_router",
+    "topics_router",
+    "global_topics_router",
+    "questions_router",
+    "progress_router",
+    "ai_router",
+    "flashcards_router",
+    "activity_logs_router",
+    "classrooms_router",
+    "assignments_router",
+    "essays_router",
+    "wiki_router",
+    "audio_router",
+    "youtube_router",
+    "library_router"
+]

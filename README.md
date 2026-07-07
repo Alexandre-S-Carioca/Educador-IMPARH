@@ -297,4 +297,17 @@ Isso iniciará um container PostgreSQL mapeado na porta local `5433` (com as cre
    - Cada acerto concede **10 XP** ao aluno.
    - Cada erro não concede XP, mas libera o botão **"Tutor de IA"** para que o aluno possa entender exatamente por que errou e qual era o raciocínio correto.
 5. **Level Up**: A cada **100 XP** acumulados, o aluno avança para o próximo nível (Ex: Nível 1 -> 0 a 99 XP, Nível 2 -> 100 a 199 XP, etc.).
-# Educador-IMPARH
+## 🚀 Versão v2.0 (Fases 1 a 5 - Concluídas)
+
+O Educador foi atualizado para a versão 2.0, trazendo recursos avançados para alunos e professores em cinco fases estruturadas de entrega:
+
+### Recursos Adicionados:
+1. **Tutoria Avançada de Redação (IA)**: Integração com a API Groq utilizando o modelo `llama-3.1-8b-instant` para correção pedagógica e feedback ortográfico/estrutural instantâneo de redações.
+2. **Painel do Professor**: Criação de turmas, tarefas, correção e atribuição de notas de redação sobrepondo o feedback sugerido pela IA.
+3. **Dashboards de Desempenho Escolar**: Gráficos analíticos integrados para professores contendo taxa de entrega de redações, médias de notas por tarefa e total de alunos matriculados.
+4. **Wikipedia API**: Seção "Saiba Mais com a Wikipedia" nos tópicos estudados para contextualização literária e enciclopédica do conteúdo.
+5. **Player Fonético IPA (Áudio)**: Auxílio de pronúncia e fonética de palavras difíceis diretamente na aba de teoria do aluno.
+6. **Videoaulas Dinâmicas (YouTube)**: Carrossel de sugestão automática de videoaulas relacionadas por inteligência de busca no YouTube.
+7. **Biblioteca de Clássicos (MEC / Domínio Público)**: Download de grandes obras literárias nacionais em PDF em nova aba integrada no aplicativo.
+8. **Linha do Tempo de Atividades**: Acompanhamento dinâmico em formato de timeline dos quizzes resolvidos, redações escritas e XP ganho.
+

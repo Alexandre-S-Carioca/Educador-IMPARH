@@ -1,8 +1,8 @@
 import uuid
+from typing import List, Optional
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Integer, ForeignKey, Text, JSON, Boolean
 from ..base import Base, TimestampMixin
-from typing import List
 
 class Question(Base, TimestampMixin):
     __tablename__ = "questions"
@@ -49,3 +49,18 @@ class Example(Base, TimestampMixin):
     
     content: Mapped[str] = mapped_column(Text, nullable=False)
     is_commented: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class AudioContent(Base, TimestampMixin):
+    """Conteúdo de áudio para pronúncia e fonética de palavras/frases."""
+    __tablename__ = "audio_contents"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    topic_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("topics.id", ondelete="CASCADE"), nullable=False)
+
+    topic: Mapped["Topic"] = relationship(back_populates="audio_contents")
+
+    word_or_phrase: Mapped[str] = mapped_column(String(255), nullable=False)
+    audio_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    ipa_phonetic: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)  # ex: /\u02c8pa.la.vra/
+    language_level: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)  # ex: "fundamental_ii"

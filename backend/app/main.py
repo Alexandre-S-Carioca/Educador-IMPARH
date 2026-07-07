@@ -1,7 +1,25 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .core.config import settings
-from .api import courses_router, modules_router, units_router, topics_router, global_topics_router, questions_router, progress_router, ai_router, flashcards_router, activity_logs_router
+from .api import (
+    courses_router,
+    modules_router,
+    units_router,
+    topics_router,
+    global_topics_router,
+    questions_router,
+    progress_router,
+    ai_router,
+    flashcards_router,
+    activity_logs_router,
+    classrooms_router,
+    assignments_router,
+    essays_router,
+    wiki_router,
+    audio_router,
+    youtube_router,
+    library_router
+)
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -26,6 +44,13 @@ app.include_router(progress_router, prefix="/api/v1")
 app.include_router(ai_router, prefix="/api/v1")
 app.include_router(flashcards_router, prefix="/api/v1")
 app.include_router(activity_logs_router, prefix="/api/v1")
+app.include_router(classrooms_router, prefix="/api/v1")
+app.include_router(assignments_router, prefix="/api/v1")
+app.include_router(essays_router, prefix="/api/v1")
+app.include_router(wiki_router, prefix="/api/v1")
+app.include_router(audio_router, prefix="/api/v1")
+app.include_router(youtube_router, prefix="/api/v1")
+app.include_router(library_router, prefix="/api/v1")
 
 @app.get("/health")
 def health_check():

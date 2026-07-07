@@ -55,3 +55,4 @@ class Topic(Base, TimestampMixin):
     questions: Mapped[List["Question"]] = relationship(back_populates="topic", cascade="all, delete-orphan")
     flashcards: Mapped[List["Flashcard"]] = relationship(back_populates="topic", cascade="all, delete-orphan")
     examples: Mapped[List["Example"]] = relationship(back_populates="topic", cascade="all, delete-orphan")
+    audio_contents: Mapped[List["AudioContent"]] = relationship(back_populates="topic", cascade="all, delete-orphan")

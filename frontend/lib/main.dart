@@ -12,6 +12,8 @@ import 'features/admin/presentation/admin_home_screen.dart';
 import 'features/admin/presentation/admin_topic_form_screen.dart';
 import 'features/admin/presentation/admin_question_form_screen.dart';
 import 'features/gamification/presentation/main_navigation_screen.dart';
+import 'features/course/presentation/student_assignments_screen.dart';
+import 'features/course/presentation/teacher_classrooms_screen.dart';
 
 void main() {
   runApp(
@@ -66,6 +68,20 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/admin/topic/:id/create-question',
         builder: (context, state) => AdminQuestionFormScreen(topicId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/student/assignments',
+        builder: (context, state) => const StudentAssignmentsScreen(),
+      ),
+      GoRoute(
+        path: '/student/essay/write',
+        builder: (context, state) => StudentWriteEssayScreen(
+          assignmentId: state.uri.queryParameters['assignmentId'],
+        ),
+      ),
+      GoRoute(
+        path: '/teacher/classrooms',
+        builder: (context, state) => const TeacherClassroomsScreen(),
       ),
     ],
   );

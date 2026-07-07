@@ -150,3 +150,117 @@ class ActivityLogResponse(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+# Esquemas da v2.0
+from ..infrastructure.db.models.user import UserLevel
+
+class ClassRoomBase(BaseModel):
+    name: str
+    level: UserLevel
+    series: int
+
+class ClassRoomCreate(ClassRoomBase):
+    pass
+
+class ClassRoomResponse(ClassRoomBase):
+    id: uuid.UUID
+    teacher_id: uuid.UUID
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class AssignmentBase(BaseModel):
+    title: str
+    type: str  # "essay" | "quiz" | "exercise"
+    description: Optional[str] = None
+    due_date: Optional[datetime] = None
+    rubric: Optional[Dict] = None
+
+class AssignmentCreate(AssignmentBase):
+    classroom_id: uuid.UUID
+
+class AssignmentResponse(AssignmentBase):
+    id: uuid.UUID
+    teacher_id: uuid.UUID
+    classroom_id: uuid.UUID
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class StudentEssayBase(BaseModel):
+    content: str
+
+class StudentEssayCreate(StudentEssayBase):
+    assignment_id: Optional[uuid.UUID] = None
+
+class StudentEssayResponse(StudentEssayBase):
+    id: uuid.UUID
+    student_id: uuid.UUID
+    assignment_id: Optional[uuid.UUID]
+    word_count: int
+    grade: Optional[float]
+    ai_feedback: Optional[str]
+    teacher_feedback: Optional[str]
+    status: str
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class StudentSubmissionBase(BaseModel):
+    content: Optional[str] = None
+
+class StudentSubmissionCreate(StudentSubmissionBase):
+    assignment_id: uuid.UUID
+
+class StudentSubmissionResponse(StudentSubmissionBase):
+    id: uuid.UUID
+    assignment_id: uuid.UUID
+    student_id: uuid.UUID
+    submitted_at: Optional[datetime]
+    grade: Optional[float]
+    feedback: Optional[str]
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+class AssignmentStat(BaseModel):
+    assignment_id: uuid.UUID
+    title: str
+    submissions_count: int
+    submissions_percentage: float
+    average_grade: Optional[float]
+
+    model_config = {"from_attributes": True}
+
+class ClassroomStatsResponse(BaseModel):
+    classroom_id: uuid.UUID
+    name: str
+    students_count: int
+    assignments_stats: List[AssignmentStat] = []
+
+    model_config = {"from_attributes": True}
+
+class AudioContentResponse(BaseModel):
+    id: uuid.UUID
+    topic_id: uuid.UUID
+    word_or_phrase: str
+    audio_url: Optional[str] = None
+    ipa_phonetic: Optional[str] = None
+    language_level: Optional[str] = None
+
+    model_config = {"from_attributes": True}
+
+
+
+
+
+
+

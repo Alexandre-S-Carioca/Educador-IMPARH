@@ -33,14 +33,82 @@ def seed_db():
         db.add(user)
         db.commit()
 
-    # 1. Curso
-    course = Course(
-        name="Português para Concursos", 
-        description="O curso definitivo de língua portuguesa focado na banca IMPARH, com teoria e questões."
+    # 1. Cursos v2.0
+    course_f1 = Course(
+        name="Português - Fundamental I",
+        description="Introdução à leitura, escrita, alfabetização e vocabulário simples."
     )
-    db.add(course)
+    course = Course(
+        name="Português - Fundamental II", 
+        description="Morfologia, Sintaxe e Gêneros Textuais para o Fundamental II."
+    )
+    course_em = Course(
+        name="Português - Ensino Médio",
+        description="Literatura, Redação/ENEM e Análise Crítica de obras literárias."
+    )
+    db.add_all([course_f1, course, course_em])
     db.commit()
+    db.refresh(course_f1)
     db.refresh(course)
+    db.refresh(course_em)
+
+    # 1.1. Módulo Fundamental I
+    module_f1 = Module(
+        course_id=course_f1.id,
+        title="Módulo 1: Alfabetização e Leitura",
+        order_index=1
+    )
+    db.add(module_f1)
+    db.commit()
+    db.refresh(module_f1)
+
+    unit_f1 = Unit(
+        module_id=module_f1.id,
+        title="Unidade 1: O Alfabeto Português",
+        order_index=1
+    )
+    db.add(unit_f1)
+    db.commit()
+    db.refresh(unit_f1)
+
+    topic_f1 = Topic(
+        unit_id=unit_f1.id,
+        title="O Alfabeto e Vogais",
+        order_index=1,
+        introduction="Vamos aprender as letras do nosso alfabeto e a importância das vogais!",
+        theory_markdown="# O Alfabeto\n\nO nosso alfabeto tem **26 letras**! Elas são divididas em **Vogais** e **Consoantes**.\n\n## As Vogais\nAs vogais são as letras mais importantes das palavras. São elas:\n- **A** (Abelha)\n- **E** (Elefante)\n- **I** (Igreja)\n- **O** (Olho)\n- **U** (Uva)\n\nSem as vogais, não conseguimos formar sílabas nem pronunciar as palavras de forma simples!"
+    )
+    db.add(topic_f1)
+    db.commit()
+
+    # 1.2. Módulo Ensino Médio
+    module_em = Module(
+        course_id=course_em.id,
+        title="Módulo 1: Literatura e Redação ENEM",
+        order_index=1
+    )
+    db.add(module_em)
+    db.commit()
+    db.refresh(module_em)
+
+    unit_em = Unit(
+        module_id=module_em.id,
+        title="Unidade 1: Barroco e Arcadismo",
+        order_index=1
+    )
+    db.add(unit_em)
+    db.commit()
+    db.refresh(unit_em)
+
+    topic_em = Topic(
+        unit_id=unit_em.id,
+        title="O Barroco no Brasil",
+        order_index=1,
+        introduction="Estudo sobre o Barroco brasileiro, a arte da contrarreforma e as principais obras.",
+        theory_markdown="# O Barroco Brasileiro\n\nO Barroco foi o primeiro movimento literário expressivo em terras brasileiras, ocorrendo no século XVII.\n\n## Características Principais\n- **Dualismo**: Oposição entre carne (pecado) e espírito (salvação).\n- **Cultismo**: Jogo de palavras e vocabulário rebuscado.\n- **Conceptismo**: Jogo de ideias e lógica rigorosa (sermões).\n\n## Principais Autores\n- **Gregório de Matos**: Conhecido como 'Boca do Inferno' por suas sátiras impiedosas da sociedade colonial baiana.\n- **Padre Antônio Vieira**: Famoso por seus sermões conceptistas defendendo indígenas e criticando a inquisição."
+    )
+    db.add(topic_em)
+    db.commit()
 
     # 2. Módulo
     module = Module(

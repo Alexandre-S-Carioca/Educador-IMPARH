@@ -71,16 +71,30 @@ async def test_gemini_tutor_service_explain(mock_genai_model, db):
         db.commit()
 
 def test_get_tutor_service_with_or_without_key():
-    original_key = settings.GEMINI_API_KEY
+    from app.infrastructure.services.ai_tutor import GroqTutorService
+    original_gemini = settings.GEMINI_API_KEY
+    original_groq = settings.GROQ_API_KEY
+    original_provider = settings.AI_PROVIDER
     
-    # Sem chave -> Retorna o MockTutorService
-    settings.GEMINI_API_KEY = None
-    service = get_tutor_service()
-    assert isinstance(service, MockTutorService)
-    
-    # Com chave -> Retorna o GeminiTutorService
-    settings.GEMINI_API_KEY = "dummy_key"
-    service = get_tutor_service()
-    assert isinstance(service, GeminiTutorService)
-    
-    settings.GEMINI_API_KEY = original_key
+    try:
+        # Sem chaves de API -> Retorna o MockTutorService
+        settings.GEMINI_API_KEY = None
+        settings.GROQ_API_KEY = None
+        service = get_tutor_service()
+        assert isinstance(service, MockTutorService)
+        
+        # Com chave Groq e AI_PROVIDER = groq -> Retorna GroqTutorService
+        settings.AI_PROVIDER = "groq"
+        settings.GROQ_API_KEY = "gsk_dummy_key"
+        service = get_tutor_service()
+        assert isinstance(service, GroqTutorService)
+        
+        # Com chave Gemini e AI_PROVIDER = gemini -> Retorna GeminiTutorService
+        settings.AI_PROVIDER = "gemini"
+        settings.GEMINI_API_KEY = "dummy_key"
+        service = get_tutor_service()
+        assert isinstance(service, GeminiTutorService)
+    finally:
+        settings.GEMINI_API_KEY = original_gemini
+        settings.GROQ_API_KEY = original_groq
+        settings.AI_PROVIDER = original_provider

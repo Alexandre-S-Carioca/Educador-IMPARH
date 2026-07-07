@@ -2,16 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
-import 'package:go_router/go_router.dart';
 import '../application/course_repository.dart';
 import '../domain/course_models.dart';
 import '../../gamification/application/progress_repository.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  String? _selectedCourseId;
+
+  @override
+  Widget build(BuildContext context) {
     final coursesAsync = ref.watch(coursesProvider);
     final progressAsync = ref.watch(progressSummaryProvider);
 
@@ -37,12 +43,6 @@ class HomeScreen extends ConsumerWidget {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle, color: Colors.white),
-            onPressed: () {},
-          )
-        ],
       ),
       body: coursesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -51,25 +51,89 @@ class HomeScreen extends ConsumerWidget {
           if (courses.isEmpty) {
             return const Center(child: Text('Nenhum curso disponível.'));
           }
-          final courseId = courses.first.id;
-          final modulesAsync = ref.watch(modulesProvider(courseId));
 
-          return modulesAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (err, stack) => Center(child: Text('Erro ao carregar módulos: $err')),
-            data: (modules) {
-              if (modules.isEmpty) {
-                return const Center(child: Text('Nenhum módulo encontrado.'));
-              }
-              return ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: modules.length,
-                itemBuilder: (context, index) {
-                  final module = modules[index];
-                  return _buildModuleCard(context, module);
-                },
-              );
-            },
+          _selectedCourseId ??= courses.first.id;
+
+          final selectedCourse = courses.firstWhere(
+            (c) => c.id == _selectedCourseId,
+            orElse: () => courses.first,
+          );
+
+          final modulesAsync = ref.watch(modulesProvider(selectedCourse.id));
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 54,
+                color: Colors.white,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  itemCount: courses.length,
+                  itemBuilder: (context, index) {
+                    final course = courses[index];
+                    final isSelected = course.id == _selectedCourseId;
+                    
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: FilterChip(
+                        selected: isSelected,
+                        showCheckmark: false,
+                        label: Text(
+                          course.name.replaceAll('Português - ', ''),
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: isSelected ? Colors.white : Colors.grey.shade700,
+                          ),
+                        ),
+                        selectedColor: Colors.blueAccent.shade700,
+                        onSelected: (selected) {
+                          if (selected) {
+                            setState(() {
+                              _selectedCourseId = course.id;
+                            });
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const Divider(height: 1),
+              Expanded(
+                child: modulesAsync.when(
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (err, stack) => Center(child: Text('Erro ao carregar módulos: $err')),
+                  data: (modules) {
+                    if (modules.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.menu_book_outlined, size: 48, color: Colors.grey.shade400),
+                            const SizedBox(height: 12),
+                            Text(
+                              'Nenhum módulo nesta trilha ainda.',
+                              style: GoogleFonts.inter(color: Colors.grey.shade500, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: modules.length,
+                      itemBuilder: (context, index) {
+                        final module = modules[index];
+                        return _buildModuleCard(context, module);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),

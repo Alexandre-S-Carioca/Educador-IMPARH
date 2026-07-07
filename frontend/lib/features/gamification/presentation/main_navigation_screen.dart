@@ -6,6 +6,8 @@ import '../../course/presentation/home_screen.dart';
 import 'statistics_screen.dart';
 import 'activity_history_screen.dart';
 import '../../admin/presentation/admin_home_screen.dart';
+import '../../course/presentation/student_assignments_screen.dart';
+import '../../course/presentation/library_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -21,6 +23,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     const HomeScreen(),
     const StatisticsScreen(),
     const ActivityHistoryScreen(),
+    const StudentAssignmentsScreen(),
+    const LibraryScreen(),
     const AdminHomeScreen(),
   ];
 
@@ -57,6 +61,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.history),
               label: 'Histórico',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.edit_note),
+              label: 'Redações',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.local_library),
+              label: 'Biblioteca',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.admin_panel_settings),

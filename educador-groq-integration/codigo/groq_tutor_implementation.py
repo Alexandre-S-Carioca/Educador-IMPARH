@@ -1,3 +1,16 @@
+# ============================================================================
+# ARQUIVO: backend/app/infrastructure/services/ai_tutor.py (VERSÃO GROQ)
+# ============================================================================
+#
+# Este arquivo contém os serviços de tutoria com suporte a Groq (recomendado)
+# e Gemini (fallback). Copie este conteúdo para substituir seu ai_tutor.py
+#
+# Requisitos:
+# - pip install groq>=0.4.0
+# - Configurar GROQ_API_KEY no .env
+#
+# ============================================================================
+
 import asyncio
 import logging
 import time
@@ -20,9 +33,6 @@ logger = logging.getLogger(__name__)
 class BaseTutorService:
     """Interface base para todos os serviços de tutoria"""
     async def explain(self, db: Session, question_id: uuid.UUID, selected_option: str) -> str:
-        raise NotImplementedError()
-
-    async def correct_essay(self, content: str, title: str, rubric: Optional[dict] = None) -> tuple[float, str]:
         raise NotImplementedError()
 
 
@@ -58,18 +68,6 @@ A opção {correct} é a correta porque:
 **Dica de Ouro:** Em provas do IMPARH, fique muito atento aos "distratores". Quando a banca pede a incorreta ou foca em exceções, leia duas vezes o enunciado!
 
 *(Nota: Esta é uma resposta simulada do MockTutorService. Quando a Groq API for ativada, eu lerei o contexto completo e gerarei um texto dinâmico para você!)*
-"""
-
-    async def correct_essay(self, content: str, title: str, rubric: Optional[dict] = None) -> tuple[float, str]:
-        # Retorna nota fictícia e feedback mockado
-        return 8.5, """NOTA: 8.5
-
-### Avaliação da Redação (Simulada pelo Mock)
-Muito bom trabalho! A estrutura do seu texto é adequada, com introdução bem definida e boa coerência.
-
-- **Pontos Fortes**: Excelente vocabulário e coesão entre parágrafos.
-- **Pontos a Melhorar**: Revise a concordância nominal no segundo parágrafo.
-- **Critérios Utilizados**: Estrutura textual, Concordância e pontuação, Riqueza vocabular, Coesão e coerência.
 """
 
 
@@ -190,57 +188,6 @@ INSTRUÇÕES:
             # Fallback para Mock em caso de erro
             return await MockTutorService().explain(db, question_id, selected_option)
 
-    async def correct_essay(self, content: str, title: str, rubric: Optional[dict] = None) -> tuple[float, str]:
-        start_time = time.time()
-        prompt = f"""Você é um corretor de redações de Língua Portuguesa altamente qualificado.
-Avalie a redação do aluno com o tema/título: "{title}".
-
-CONTEÚDO DA REDAÇÃO:
----
-{content}
----
-
-Critérios de Avaliação (Rubrica): {rubric if rubric else 'Estrutura do texto, Concordância e pontuação, Riqueza vocabular, Coesão e coerência'}
-
-INSTRUÇÕES:
-1. Analise a redação com base nos critérios fornecidos ou padrão.
-2. Dê uma nota final de 0 a 10 baseada na qualidade do texto.
-3. Gere um feedback pedagógico, didático, claro e encorajador em formato Markdown.
-4. No início do seu feedback, insira explicitamente a nota no formato: NOTA: X.X (onde X.X é um valor decimal de 0.0 a 10.0), seguido de uma quebra de linha. Exemplo: "NOTA: 8.5"
-"""
-        try:
-            loop = asyncio.get_event_loop()
-            response: ChatCompletion = await loop.run_in_executor(
-                None,
-                lambda: self.client.chat.completions.create(
-                    model=self.model,
-                    messages=[
-                        {"role": "system", "content": "Você é um corretor de redações profissional e didático."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    temperature=0.3,
-                    max_tokens=1500
-                )
-            )
-            feedback = response.choices[0].message.content
-            elapsed = time.time() - start_time
-            logger.info(f"✅ Groq corrigiu a redação em {elapsed:.2f}s")
-            
-            # Extrair nota se possível
-            grade = 7.0  # nota padrão
-            try:
-                import re
-                match = re.search(r"NOTA:\s*([\d\.]+)", feedback, re.IGNORECASE)
-                if match:
-                    grade = float(match.group(1))
-            except Exception:
-                pass
-            return grade, feedback
-        except Exception as e:
-            elapsed = time.time() - start_time
-            logger.error(f"❌ Erro Groq na correção de redação após {elapsed:.2f}s: {e}")
-            return 7.5, f"Erro ao gerar correção com IA: {str(e)}\n\n*(Nota: Ocorreu uma falha de conexão com a API. Usando correção de fallback)*"
-
 
 class GeminiTutorService(BaseTutorService):
     """
@@ -300,47 +247,6 @@ Instruções para a explicação:
         except Exception as e:
             logger.error(f"❌ Erro Gemini: {str(e)}")
             return f"Erro ao gerar explicação com IA: {str(e)}\n\n*(Nota: Ocorreu uma falha de conexão com a API)*"
-
-    async def correct_essay(self, content: str, title: str, rubric: Optional[dict] = None) -> tuple[float, str]:
-        prompt = f"""Você é um corretor de redações de Língua Portuguesa altamente qualificado.
-Avalie a redação do aluno com o tema/título: "{title}".
-
-CONTEÚDO DA REDAÇÃO:
----
-{content}
----
-
-Critérios de Avaliação (Rubrica): {rubric if rubric else 'Estrutura do texto, Concordância e pontuação, Riqueza vocabular, Coesão e coerência'}
-
-INSTRUÇÕES:
-1. Analise a redação com base nos critérios.
-2. Dê uma nota final de 0 a 10 baseada na qualidade do texto.
-3. Gere um feedback pedagógico, didático, claro e encorajador em formato Markdown.
-4. No início do seu feedback, insira explicitamente a nota no formato: NOTA: X.X (onde X.X é um valor decimal de 0.0 a 10.0), seguido de uma quebra de linha. Exemplo: "NOTA: 8.5"
-"""
-        try:
-            loop = asyncio.get_event_loop()
-            model = genai.GenerativeModel('gemini-1.5-flash')
-            response = await loop.run_in_executor(
-                None,
-                lambda: model.generate_content(prompt)
-            )
-            feedback = response.text
-            logger.info("✅ Gemini corrigiu a redação")
-            
-            # Extrair nota se possível
-            grade = 7.0  # nota padrão
-            try:
-                import re
-                match = re.search(r"NOTA:\s*([\d\.]+)", feedback, re.IGNORECASE)
-                if match:
-                    grade = float(match.group(1))
-            except Exception:
-                pass
-            return grade, feedback
-        except Exception as e:
-            logger.error(f"❌ Erro Gemini na correção de redação: {e}")
-            return 7.5, f"Erro ao gerar correção com IA: {str(e)}\n\n*(Nota: Ocorreu uma falha de conexão com a API. Usando correção de fallback)*"
 
 
 def get_tutor_service() -> BaseTutorService:
