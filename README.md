@@ -310,4 +310,4 @@ O Educador foi atualizado para a versão 2.0, trazendo recursos avançados para 
 6. **Videoaulas Dinâmicas (YouTube)**: Carrossel de sugestão automática de videoaulas relacionadas por inteligência de busca no YouTube.
 7. **Biblioteca de Clássicos (MEC / Domínio Público)**: Download de grandes obras literárias nacionais em PDF em nova aba integrada no aplicativo.
 8. **Linha do Tempo de Atividades**: Acompanhamento dinâmico em formato de timeline dos quizzes resolvidos, redações escritas e XP ganho.
-
+9. **Conteúdo Expandido de Língua Portuguesa**: Incorporação de 79 tópicos completos, 371 questões e 231 flashcards cobrindo Fundamental I, Fundamental II e Ensino Médio. Além disso, incluída a correção de compatibilidade do Flutter para Windows (`dart:js` substituído por `url_launcher`).

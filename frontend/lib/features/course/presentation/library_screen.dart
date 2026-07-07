@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:js' as js;
+import 'package:url_launcher/url_launcher.dart';
 import '../application/classroom_repository.dart';
 import '../domain/classroom_models.dart';
 
@@ -150,7 +150,7 @@ class LibraryScreen extends ConsumerWidget {
                               backgroundColor: const Color(0xFF2C3E50),
                             ),
                           );
-                          js.context.callMethod('open', [book.downloadUrl, '_blank']);
+                          launchUrl(Uri.parse(book.downloadUrl), mode: LaunchMode.externalApplication);
                         },
                         child: Text(
                           'Baixar PDF',
@@ -210,7 +210,7 @@ class LibraryScreen extends ConsumerWidget {
                     backgroundColor: const Color(0xFF2C3E50),
                   ),
                 );
-                js.context.callMethod('open', [book.downloadUrl, '_blank']);
+                launchUrl(Uri.parse(book.downloadUrl), mode: LaunchMode.externalApplication);
               },
               icon: const Icon(Icons.download, size: 16),
               label: const Text('Download PDF'),
